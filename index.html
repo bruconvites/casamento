@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Convite de Casamento</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%;background:#f1e0c8;overflow:hidden}
+  body{display:flex;align-items:center;justify-content:center;
+    background:radial-gradient(circle at 50% 40%,#f7ead6 0%,#e9d2b0 100%)}
+
+  .stage{
+    position:relative;
+    width:min(100vw, calc(100dvh * 941 / 1672));
+    aspect-ratio:941/1672;
+    container-type:inline-size;
+    perspective:2200px;
+    overflow:hidden;
+    background:#fbeedd;
+    box-shadow:0 0 40px rgba(90,50,20,.25);
+    user-select:none;-webkit-user-select:none;
+  }
+
+  .page{position:absolute;inset:0;display:none;transform-style:preserve-3d;z-index:1}
+  .page.active{display:block}
+  .face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:#fbeedd}
+  .face img{width:100%;height:100%;object-fit:contain;display:block;pointer-events:none;-webkit-user-drag:none}
+  .back{transform:rotateY(180deg);
+    background:linear-gradient(90deg,#ecd9ba,#f8ecd7 60%,#e8d2ae)}
+  .shade{position:absolute;inset:0;background:rgba(40,20,5,.45);opacity:0;pointer-events:none;z-index:50}
+
+  /* ---------- canto da página virada ---------- */
+  .corner{position:absolute;bottom:0;width:22%;aspect-ratio:1;cursor:pointer;z-index:20;
+    animation:wiggle 2.6s ease-in-out infinite;transition:transform .25s}
+  .corner:hover{transform:scale(1.12)}
+  .corner.right{right:0;transform-origin:100% 100%}
+  .corner.left{left:0;transform-origin:0 100%}
+  .corner .under{position:absolute;inset:0;background:linear-gradient(135deg,#d9bf98,#efdcbf 70%)}
+  .corner.right .under{clip-path:polygon(100% 0,0 100%,100% 100%)}
+  .corner.left  .under{clip-path:polygon(0 0,100% 100%,0 100%);background:linear-gradient(225deg,#d9bf98,#efdcbf 70%)}
+  .corner .flap-wrap{position:absolute;inset:0}
+  .corner.right .flap-wrap{filter:drop-shadow(-3px 3px 3px rgba(60,30,5,.45))}
+  .corner.left  .flap-wrap{filter:drop-shadow(3px 3px 3px rgba(60,30,5,.45))}
+  .corner .flap{position:absolute;inset:0}
+  .corner.right .flap{clip-path:polygon(100% 0,0 100%,0 0);background:linear-gradient(315deg,#e2cba6 0%,#fff8ea 55%,#f6e8cf 100%)}
+  .corner.left  .flap{clip-path:polygon(0 0,100% 100%,100% 0);background:linear-gradient(225deg,#e2cba6 0%,#fff8ea 55%,#f6e8cf 100%)}
+  .corner span{position:absolute;top:66.7%;white-space:nowrap;font:italic 600 2.6cqw Georgia,'Times New Roman',serif;
+    color:#7a4a22;letter-spacing:.03em}
+  .corner.right span{left:66.7%;transform:translate(-50%,-50%) rotate(-45deg)}
+  .corner.left  span{left:33.3%;transform:translate(-50%,-50%) rotate(45deg)}
+  @keyframes wiggle{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+
+  /* ---------- primeira página ---------- */
+  .hint{position:absolute;left:50%;top:50.4%;transform:translateX(-50%);width:80%;text-align:center;
+    font:italic 400 2.6cqw Georgia,'Times New Roman',serif;color:#7a4a22;opacity:.85;
+    text-shadow:0 0 4px #fbeedd,0 0 8px #fbeedd;animation:hint 3s ease-in-out infinite;pointer-events:none}
+  @keyframes hint{0%,100%{opacity:.45}50%{opacity:.95}}
+  .seal-ring{position:absolute;left:49.6%;top:40.85%;width:31%;aspect-ratio:1;border-radius:50%;
+    transform:translate(-50%,-50%);pointer-events:none;animation:ring 2.8s ease-out infinite}
+  @keyframes ring{0%{box-shadow:0 0 0 0 rgba(212,165,60,.45)}100%{box-shadow:0 0 0 5cqw rgba(212,165,60,0)}}
+  .open-zone{position:absolute;left:0;right:0;top:0;height:52%;cursor:pointer;z-index:10}
+
+  /* ---------- hotspots da página interativa ---------- */
+  .hot{position:absolute;cursor:pointer;z-index:10;border-radius:18px;transition:background .2s}
+  .hot:hover{background:rgba(212,165,60,.12)}
+  #hot-dress{left:17%;top:60.8%;width:30%;height:18%}
+  #hot-manual{left:53.5%;top:60.8%;width:31%;height:18%}
+</style>
+</head>
+<body>
+
+<div class="stage" id="stage">
+
+  <!-- 1 -->
+  <div class="page active" id="p-primeira">
+    <div class="face front">
+      <img src="primeira.jpg" alt="Convite">
+      <div class="seal-ring"></div>
+      <div class="hint">Clique no selo para abrir o seu convite</div>
+      <div class="open-zone" data-go="p-segunda" data-mode="fade"></div>
+    </div>
+    <div class="face back"></div>
+    <div class="shade"></div>
+  </div>
+
+  <!-- 2 -->
+  <div class="page" id="p-segunda">
+    <div class="face front">
+      <img src="segunda.jpg" alt="Convidamos você para nosso casamento">
+      <div class="corner right" data-go="p-terceira" data-mode="next"><div class="under"></div><div class="flap-wrap"><div class="flap"></div></div><span>puxe aqui</span></div>
+    </div>
+    <div class="face back"></div>
+    <div class="shade"></div>
+  </div>
+
+  <!-- 3 -->
+  <div class="page" id="p-terceira">
+    <div class="face front">
+      <img src="terceira.jpg" alt="Save the date">
+      <div class="corner right" data-go="p-quarta" data-mode="next"><div class="under"></div><div class="flap-wrap"><div class="flap"></div></div><span>puxe aqui</span></div>
+    </div>
+    <div class="face back"></div>
+    <div class="shade"></div>
+  </div>
+
+  <!-- 4 -->
+  <div class="page" id="p-quarta">
+    <div class="face front">
+      <img src="quarta.jpg" alt="Data e horário">
+      <div class="corner right" data-go="p-interativo" data-mode="next"><div class="under"></div><div class="flap-wrap"><div class="flap"></div></div><span>puxe aqui</span></div>
+    </div>
+    <div class="face back"></div>
+    <div class="shade"></div>
+  </div>
+
+  <!-- 5 interativo -->
+  <div class="page" id="p-interativo">
+    <div class="face front">
+      <img src="Interativo.jpg" alt="Toque nos ícones para interagir">
+      <div class="hot" id="hot-dress" data-go="p-dress" data-mode="fade" title="Dress Code"></div>
+      <div class="hot" id="hot-manual" data-go="p-manual" data-mode="fade" title="Manual dos convidados"></div>
+      <div class="corner left" data-go="p-quarta" data-mode="prev"><div class="under"></div><div class="flap-wrap"><div class="flap"></div></div><span>voltar</span></div>
+    </div>
+    <div class="face back"></div>
+    <div class="shade"></div>
+  </div>
+
+  <!-- 6 dress -->
+  <div class="page" id="p-dress">
+    <div class="face front">
+      <img src="dress.jpg" alt="Dress Code">
+      <div class="corner left" data-go="p-interativo" data-mode="prev"><div class="under"></div><div class="flap-wrap"><div class="flap"></div></div><span>voltar</span></div>
+    </div>
+    <div class="face back"></div>
+    <div class="shade"></div>
+  </div>
+
+  <!-- 7 manual -->
+  <div class="page" id="p-manual">
+    <div class="face front">
+      <img src="manual.jpg" alt="Manual do Convidado">
+      <div class="corner left" data-go="p-interativo" data-mode="prev"><div class="under"></div><div class="flap-wrap"><div class="flap"></div></div><span>voltar</span></div>
+    </div>
+    <div class="face back"></div>
+    <div class="shade"></div>
+  </div>
+
+</div>
+
+<audio id="music" src="audio.mp3" loop preload="auto"></audio>
+
+<script>
+(function(){
+  var current = document.getElementById('p-primeira');
+  var busy = false;
+  var music = document.getElementById('music');
+  var musicStarted = false;
+  var DUR = 1000;
+
+  // pré-carrega todas as imagens
+  ['primeira','segunda','terceira','quarta','Interativo','dress','manual'].forEach(function(n){
+    var i = new Image(); i.src = n + '.jpg';
+  });
+
+  // música: começa no primeiro clique/toque em qualquer parte da primeira página
+  function startMusic(){
+    if(musicStarted) return;
+    var p = music.play();
+    if(p && p.then){ p.then(function(){ musicStarted = true; }).catch(function(){}); }
+    else { musicStarted = true; }
+  }
+  document.getElementById('p-primeira').addEventListener('click', startMusic);
+
+  function reset(el){
+    el.style.transition = 'none';
+    el.style.transform = '';
+    el.style.transformOrigin = '';
+    el.style.opacity = '';
+    el.style.zIndex = '';
+    var s = el.querySelector('.shade');
+    s.style.transition = 'none'; s.style.opacity = '0';
+  }
+
+  function go(id, mode){
+    if(busy) return;
+    var target = document.getElementById(id);
+    if(!target || target === current) return;
+    busy = true;
+    var from = current;
+
+    reset(target);
+    target.classList.add('active');
+    target.style.zIndex = 1;
+    from.style.zIndex = 2;
+
+    var tShade = target.querySelector('.shade');
+    var rot = null, origin = null;
+    if(mode === 'next'){ rot = 'rotateY(-180deg)'; origin = '0% 50%'; }
+    if(mode === 'prev'){ rot = 'rotateY(180deg)';  origin = '100% 50%'; }
+
+    // força o navegador a registrar o estado inicial
+    void from.offsetWidth;
+
+    if(rot){
+      from.style.transformOrigin = origin;
+      from.style.transition = 'transform ' + DUR + 'ms cubic-bezier(.45,.05,.3,1), opacity 200ms linear ' + (DUR-200) + 'ms';
+      tShade.style.opacity = '1';
+      void tShade.offsetWidth;
+      tShade.style.transition = 'opacity ' + DUR + 'ms ease-out';
+      tShade.style.opacity = '0';
+      from.style.transform = rot;
+      from.style.opacity = '0';
+    } else {
+      from.style.transition = 'opacity 700ms ease';
+      from.style.opacity = '0';
+    }
+
+    var wait = rot ? DUR + 60 : 740;
+    setTimeout(function(){
+      from.classList.remove('active');
+      reset(from);
+      target.style.zIndex = '';
+      current = target;
+      busy = false;
+    }, wait);
+  }
+
+  document.getElementById('stage').addEventListener('click', function(e){
+    var el = e.target.closest('[data-go]');
+    if(!el) return;
+    go(el.getAttribute('data-go'), el.getAttribute('data-mode'));
+  });
+})();
+</script>
+</body>
+</html>
